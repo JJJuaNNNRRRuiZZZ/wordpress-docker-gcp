@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  mi-base-de-datos:
+    image: mariadb:10.6.4-focal
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=secreto_root
+      - MYSQL_DATABASE=wordpress_db
+      - MYSQL_USER=wp_user
+      - MYSQL_PASSWORD=wp_pass
+    volumes:
+      - db_data:/var/lib/mysql
+
+  mi-sitio-web:
+    image: wordpress:latest
+    depends_on:
+      - mi-base-de-datos
+    ports:
+      - "80:80"
+    restart: always
+    environment:
+      - WORDPRESS_DB_HOST=mi-base-de-datos
+      - WORDPRESS_DB_USER=wp_user
+      - WORDPRESS_DB_PASSWORD=wp_pass
+      - WORDPRESS_DB_NAME=wordpress_db
+    volumes:
+      - wp_data:/var/www/html
+
+volumes:
+  db_data:
+  wp_data:
